@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html ng-app="liken.chrome" ng-csp>
+    <head>
+        <link rel="stylesheet" href="css/popup.css">
+        <script src="js/lib/angular.min.js"></script>
+        <script src="js/app/popup.js"></script>
+    </head>
+    <body id="popup" ng-controller="PopupController">
+       <script type="text/ng-template" id="liken-popup">
+          <div id="liken-popup" ng-app="liken" ng-controller="MainController">
+            <header><h1>{{title}}</h1></header>
+            <section>
+              <div ui-view></div>
+            </section>
+          </div>
+       </script>
+    </body>
+</html>

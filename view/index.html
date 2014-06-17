@@ -1,0 +1,20 @@
+<div id='liken' ng-app='liken' ng-controller='MainController' ng-csp>
+  <header ng-click="toggle()">
+    <div>
+      Save content
+      <a>{{collapsed_icon}}</a> 
+    </div>
+  </header>
+  <section ng-hide="collapsed">
+    <h3 contenteditable>{{title}}</h3>
+    <div ng-repeat="field in fields">
+      <div class="field">
+        <a ng-click="delField(field, $event)">[-]</a>
+        <a ng-click="selField(field, $event)">[*]</a>
+        <input ng-bind="field.name">
+        <input ng-bind="field.value">
+      </div>
+    </div>
+    <a ng-click='addField($event)'>[+]</a>
+  </section>
+</div>

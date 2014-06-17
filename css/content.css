@@ -1,0 +1,57 @@
+body.liken-select .liken-select-hover { 
+  z-index: 9999999999;
+  content: " ";
+  display: block;
+  background-color: blue;
+  opacity: 0.3;
+  pointer-events:none;
+  border-color: white;
+  border-width: 2px;
+  border-style: dotted;
+}
+
+#liken {
+  z-index: 99999999999;
+  position: fixed; 
+  bottom: 0px;
+  right: 0px;
+  width: 200px;
+  max-height: 400px;
+  background-color: #eeeeee;
+  border-color: #ccc;
+  border-width: 1px;
+  border-style: solid;
+}
+
+#liken * {
+  font-size: 14px; 
+  line-height: 16px;
+}
+
+#liken > header {
+  background-color: #ccc;
+}
+
+#liken > * {
+  padding: 10px; 
+}
+
+#liken a, #liken > header {
+  cursor: pointer;
+}
+
+#liken .hidden {
+  display: none;
+}
+
+#liken .liken-select-hover {
+  display: none; 
+}
+
+#liken .field {
+  margin-bottom: 10px;
+}
+#liken .field > div {
+  background-color: white;
+}
+
