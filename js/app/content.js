@@ -1,5 +1,6 @@
 var liken = angular.module('liken', ['firebase'])
 
+/*
 .service('MessageService', [function (){
   var msg = function () {}
   chrome.extension.onMessage.addListener(function (request, sender, sendResponse) {
@@ -7,51 +8,60 @@ var liken = angular.module('liken', ['firebase'])
   })
   return msg
 }])
+*/
 
-.controller('MainController', ['$scope', 'MessageService', '$firebase',  function ($scope, $msg, $firebase) {
+.controller('MainController', ['$scope', '$firebase',  function ($scope, $firebase) {
   var mask = $('<div>', {class: 'liken-select'}).appendTo('body')
 
-  var ref = new Firebase("https://liken.firebaseio.com/public");
-  var pageRef = ref.child(window.location.host.replace(/\W+/g, '_') + (window.location.pathname || "/").replace(/[^\/\w]+/g, '_'))
+  var ref = new Firebase("https://liken.firebaseio.com/");
+  var pageRef = ref.child(window.location.host.replace(/\W+/g, '_') + window.location.pathname.replace(/\W+/g, '_'))
+  var fldsRef = pageRef.child('fields')
   var liken_ref = null 
 
   $scope.title = document.title
-  $scope.fields = $firebase(pageRef.child('fields'))
-  $scope.fields.$bind($scope, 'fields')
- 
+  $scope.fields = $firebase(fldsRef)
 
   $scope.collapsed = true
-  $scope.collapsed_icon = "[+]"
+  $scope.selecting_field = null
   $scope.toggle = function (show) {
-    $scope.collapsed = typeof show == 'undefined' ? !$scope.collapsed : show
-    $scope.collapsed_icon = $scope.collapsed ? "[+]" : "[-]"
+    $scope.collapsed = typeof show === 'undefined' ? !$scope.collapsed : show
   }
 
   $scope.addField = function (event) {
     event.stopPropagation()
-    var field = {name: "Name", xpath: "", value: "Value"}
-    $scope.fields.$add(field).then(function (x) {
-      liken_ref = pageRef.child(x.path.m.slice(-1)[0]) 
-      var liken_srv = $firebase(liken_ref)
-      $scope.selField(field, event)
-    })
     $scope.toggle(true)
+    $scope.fields.$add({label: "", xpath: "", value: ""}).then(function (ref) {
+      $scope.selField({id: ref.name()}, event)
+      ref.update({id: ref.name()})
+    })
+  }
+
+  $scope.updateField = function (field) {
+    $scope.fields.$child(field.id).$update(field)
+  }
+
+  $scope.delField = function (field) {
+    $scope.fields.$child(field.id).$remove()
   }
 
   $scope.selField = function (field, event) {
     event.stopPropagation()
-    console.log("Selecting ", field)
-    $('body').addClass('liken-select').data('liken-select', field)
+    $scope.selecting_field = field
+    $('body').addClass('liken-select')
   }
 
   $(document).on('click mouseup', 'body.liken-select *', function (e) {
     if(!$(e.target).is('#liken,#liken *')) {
       e.preventDefault()
       e.stopPropagation() 
-      var field = $('body').removeClass('liken-select').data('liken-select')
+      $('body').removeClass('liken-select')
       $scope.$apply(function() {
-        field.value = $(e.target).text() 
-        field.xpath = getXPath(e.target)
+        $scope.updateField({
+          id: $scope.selecting_field.id,
+          value: $(e.target).text(),
+          xpath: getXPath(e.target)
+        })
+        $scope.selecting_field = null
         $scope.toggle(false)
       })
     }
@@ -70,7 +80,9 @@ var liken = angular.module('liken', ['firebase'])
 
 }])
 
-angular.element(document).ready(function () {
+angular.element(document).ready(boot)
+
+function boot () {
   var injector = angular.injector(['ng'])
   injector.invoke(['$http', function($http){
     var url = chrome.extension.getURL("view/index.html") 
@@ -80,7 +92,7 @@ angular.element(document).ready(function () {
       angular.bootstrap(div, ['liken'])
     })
   }])
-})
+}
 
 function getXPath( element ) {
   var xpath = '';
