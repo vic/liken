@@ -18,6 +18,7 @@ var liken = angular.module('liken', ['firebase'])
   var fldsRef = pageRef.child('fields')
   var liken_ref = null 
 
+
   $scope.title = document.title
   $scope.fields = $firebase(fldsRef)
 
@@ -50,20 +51,22 @@ var liken = angular.module('liken', ['firebase'])
     $('body').addClass('liken-select')
   }
 
-  $(document).on('click mouseup', 'body.liken-select *', function (e) {
+  $(document).on('click', 'body.liken-select *', function (e) {
     if(!$(e.target).is('#liken,#liken *')) {
       e.preventDefault()
       e.stopPropagation() 
       $('body').removeClass('liken-select')
+      var field_id = $scope.selecting_field.id
       $scope.$apply(function() {
+        $scope.toggle(false)
+        $scope.selecting_field = null
         $scope.updateField({
-          id: $scope.selecting_field.id,
+          id: field_id,
           value: $(e.target).text(),
           xpath: getXPath(e.target)
         })
-        $scope.selecting_field = null
-        $scope.toggle(false)
       })
+      $("[data-id='"+field_id+"'] [ng-model='field.label']").focus()
     }
   })
 

@@ -1,15 +1,13 @@
 <div id='liken' ng-app='liken' ng-controller='MainController' ng-csp>
   <header ng-click="toggle()">
-    <div>
-      <span ng-show="!collapsed || !selecting_field">Save content</span>
-      <span ng-show="selecting_field">Select an element</span>
-      <a>{{collapsed && '[+]' || '-'}}</a> 
-    </div>
+    <span ng-show="!collapsed || !selecting_field">Save content</span>
+    <span ng-show="selecting_field">Select an element</span>
+    <a>{{collapsed && '[+]' || '[-]'}}</a> 
   </header>
   <section ng-hide="collapsed">
     <h3 contenteditable>{{title}}</h3>
     <div ng-repeat="field in fields">
-      <div class="field">
+      <div class="field" data-id="{{field.id}}">
         <a ng-click="delField(field, $event)">[-]</a>
         <a ng-click="selField(field, $event)">[*]</a>
         <input type='text' ng-model="field.label" ng-change="updateField(field)">
